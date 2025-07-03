@@ -1,10 +1,14 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+    content: [
+        './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/app/globals.css',
+    ],
+    theme: {
+        extend: {
+            fontFamily: {
+                caveat: ['var(--font-caveat)', 'cursive'],
+            }
+        },
+    },
+    plugins: [],
 }
