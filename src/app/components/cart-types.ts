@@ -38,16 +38,13 @@ export type Quantity = number & { readonly __brand: 'quantity>0'};
 export const qty = (n: number) => Math.max(1, Math.floor(n)) as Quantity;
 
 // What is actually going in the cart (snapshot)
-export type CartItem = {
-  id: string; //product id
-  title: string; //snapshotted for display
-  image?: string;
-  priceCents: Cents; // price locked at add-to-cart time
-  qty: Quantity; //keep your 'qty' name to avoid refactors
-  // optional variant info for prints. (Different print sizes)
+// Cart item = Product + quantity (+ optional print variant info)
+export type CartItem = Product & {
+  qty: number;
   variantId?: string;
   variantLabel?: string;
 };
+
 
 // Entire cart state
 export type CartState ={
