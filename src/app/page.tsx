@@ -231,7 +231,7 @@ const caveatFont= Caveat({
               id: selectedImage.src,
               title: selectedImage.alt,
               image: selectedImage.src,
-              priceCents: parsePriceToCents(selectedImage.printPrice),
+              priceCents: cents(parsePriceToCents(selectedImage.printPrice)),
               type: 'print',
               });
               showToast(`Added "${selectedImage.alt}" (Print) to cart`);
