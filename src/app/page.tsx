@@ -9,6 +9,8 @@ import { useState, useRef } from "react";
 import { useCart } from './components/CartContext';
 import { parsePriceToCents } from './lib/money';
 import { totalmem } from "os";
+import { cents } from './components/cart-types';
+
 
 const caveatFont= Caveat({
   subsets: ["latin"],
@@ -216,7 +218,7 @@ const caveatFont= Caveat({
             id: selectedImage.src,
             title: selectedImage.alt,
             image: selectedImage.src,
-            priceCents: parsePriceToCents(selectedImage.originalPrice),
+            priceCents: cents(parsePriceToCents(selectedImage.originalPrice)),
             type: 'original',
             });
             showToast(`Added "${selectedImage.alt}" (Original) to cart`);
