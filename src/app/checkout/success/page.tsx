@@ -17,7 +17,7 @@ export default async function SuccessPage({ searchParams }: Props) {
   let customerEmail: string | null = null;
 
   if (sessionId && process.env.STRIPE_SECRET_KEY) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     amountTotal = typeof session.amount_total === 'number' ? session.amount_total : null;
     customerEmail = (session.customer_details?.email as string) || null;
