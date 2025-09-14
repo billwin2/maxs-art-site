@@ -4,10 +4,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '../components/CartContext';
 import { dollars } from '../lib/money';
+import { useState } from 'react';
 
 
 export default function CartPage() {
   const { items, updateQty, removeFromCart, clearCart, subtotalCents, totalItems } = useCart();
+  const [loading, setLoading] = useState(false);
+
+  async function handleCheckout() {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ items }) });
+      if (!res.ok) throw new Error('Checkout failed');
+      const { url } = await res.json();
+      if (!url) throw new Error('No session URL returned');
+      window.location.href = url; // Redirect to Stripe Checkout
+    } catch (err) {
+      alert((err as Error).message || 'Checkout failed');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#02120F] text-white p-6">
@@ -83,9 +100,14 @@ export default function CartPage() {
               <Link href="/" className="px-4 py-2 rounded bg-white/10 border border-white/20 hover:bg-white/20">
                 Continue Shopping
               </Link>
-              <Link href="/checkout" className="px-4 py-2 rounded bg-green-600 hover:bg-green-700">
-                Checkout
-              </Link>
+              <button
+                onClick={handleCheckout}
+                disabled={loading || totalItems === 0}
+                className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 disabled:opacity-50"
+              >
+                {loading ? 'Preparing…' : 'Checkout'}
+              </button>
+
             </div>
           </>
         )}
