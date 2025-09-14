@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     // 2) Initialize Stripe after env check
-    const stripe = new Stripe(secret, { apiVersion: '2024-06-20' });
+    const stripe = new Stripe(secret);
 
     // 3) Parse input
     const { items } = (await req.json()) as { items: CartItem[] };
