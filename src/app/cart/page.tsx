@@ -11,20 +11,31 @@ export default function CartPage() {
   const { items, updateQty, removeFromCart, clearCart, subtotalCents, totalItems } = useCart();
   const [loading, setLoading] = useState(false);
 
-  async function handleCheckout() {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ items }) });
-      if (!res.ok) throw new Error('Checkout failed');
-      const { url } = await res.json();
-      if (!url) throw new Error('No session URL returned');
-      window.location.href = url; // Redirect to Stripe Checkout
-    } catch (err) {
-      alert((err as Error).message || 'Checkout failed');
-    } finally {
-      setLoading(false);
-    }
+async function handleCheckout() {
+  try {
+    setLoading(true);
+
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // ✅ tell Next.js this is JSON
+      },
+      body: JSON.stringify({ items }), // send cart items to API
+    });
+
+    if (!res.ok) throw new Error('Checkout failed');
+
+    const { url } = await res.json();
+    if (!url) throw new Error('No session URL returned');
+
+    window.location.href = url; // ✅ redirect to Stripe Checkout
+  } catch (err) {
+    alert((err as Error).message || 'Checkout failed');
+  } finally {
+    setLoading(false);
   }
+}
+
 
   return (
     <div className="min-h-screen bg-[#02120F] text-white p-6">

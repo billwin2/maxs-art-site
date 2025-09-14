@@ -53,36 +53,38 @@ export async function POST(req: Request) {
       priceCents: Math.max(0, Math.floor(Number(it.priceCents || 0))),
     }));
 
-    const line_items = normalized.map((it) => ({
-      quantity: it.quantity,
-      price_data: {
+        // Make the type explicit so later pushes don’t narrow it weirdly
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = normalized.map((it) => ({
+    quantity: it.quantity,
+    price_data: {
         currency: 'usd',
         unit_amount: it.priceCents,
         product_data: {
-          name: it.title + (it.variantLabel ? ` – ${it.variantLabel}` : ''),
-          images: it.image ? [it.image] : undefined,
-          metadata: {
+        name: it.title + (it.variantLabel ? ` – ${it.variantLabel}` : ''),
+        images: it.image ? [it.image] : undefined,
+        metadata: {
             id: it.id,
             type: it.type,
             ...(it.variantLabel ? { variantLabel: it.variantLabel } : {}),
-          },
         },
-      },
-      adjustable_quantity:
+        },
+    },
+    adjustable_quantity:
         it.type === 'print' ? { enabled: true, minimum: 1, maximum: 10 } : undefined,
     }));
 
     const shippingFlat = Number(process.env.STRIPE_SHIPPING_FLAT_CENTS ?? '0');
     if (shippingFlat > 0) {
-      line_items.push({
+    line_items.push({
         quantity: 1,
         price_data: {
-          currency: 'usd',
-          unit_amount: shippingFlat,
-          product_data: { name: 'Shipping (flat rate)' },
+        currency: 'usd',
+        unit_amount: shippingFlat,
+        product_data: { name: 'Shipping (flat rate)' }, // OK now
         },
-      });
+    });
     }
+
 
     const siteUrl = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
