@@ -1,12 +1,7 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-import { Caveat } from 'next/font/google';
-
-const caveat = Caveat({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-caveat',
-});
+import Providers from "./providers"; // <= wraps CartProvider (and future global providers)
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,15 +10,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={caveat.variable}>
-      <body
-        className={`text-white`}
-      >
-        {children}
+    <html lang="en">
+      <body className="text-white">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
