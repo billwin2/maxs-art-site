@@ -15,26 +15,38 @@ async function handleCheckout() {
   try {
     setLoading(true);
 
+    // (optional) sanity log to ensure the shape you send is what the API expects
+    // console.log('sending items', items);
+
     const res = await fetch('/api/checkout', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // ✅ tell Next.js this is JSON
-      },
-      body: JSON.stringify({ items }), // send cart items to API
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items }), // keep as-is
     });
 
-    if (!res.ok) throw new Error('Checkout failed');
+    if (!res.ok) {
+      // Try to surface the API's actual error message
+      let message = `Checkout failed (${res.status})`;
+      try {
+        const data = await res.json();
+        if (data?.error) message = data.error;
+      } catch {
+        /* ignore parse errors */
+      }
+      throw new Error(message);
+    }
 
     const { url } = await res.json();
     if (!url) throw new Error('No session URL returned');
 
-    window.location.href = url; // ✅ redirect to Stripe Checkout
-  } catch (err) {
-    alert((err as Error).message || 'Checkout failed');
+    window.location.href = url;
+  } catch (err: any) {
+    alert(err?.message || 'Checkout failed');
   } finally {
     setLoading(false);
   }
 }
+
 
 
   return (

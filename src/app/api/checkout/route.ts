@@ -61,7 +61,6 @@ export async function POST(req: Request) {
         unit_amount: it.priceCents,
         product_data: {
         name: it.title + (it.variantLabel ? ` – ${it.variantLabel}` : ''),
-        images: it.image ? [it.image] : undefined,
         metadata: {
             id: it.id,
             type: it.type,
