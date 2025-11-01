@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { CartItem, Product } from './cart-types';
+import { getArtworkById } from '@/data/artworks';
 
 type CartState = {
   items: CartItem[];
@@ -36,6 +37,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items]);
 
   const addToCart = (product: Product, qty: number = 1) => {
+    // Prevent adding sold originals
+    const baseId = product.id.replace('-print', '');
+    const art = getArtworkById(baseId);
+    if (art?.sold && product.type === 'original') {
+      console.warn(`Attempted to add sold item: ${product.id}`);
+      return { success: false, message: 'Sorry, this original has been sold.' };
+    }
+
+
     setItems(prev => {
       const idx = prev.findIndex(i => i.id === product.id && i.type === product.type);
       if (idx !== -1) {
@@ -45,6 +55,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, { ...product, qty }];
     });
+    return { success: true };
   };
 
   const updateQty = (id: string, type: Product['type'], qty: number) => {
