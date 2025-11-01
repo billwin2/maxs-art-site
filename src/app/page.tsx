@@ -147,14 +147,19 @@ export default function Home() {
                 <button
                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
                   onClick={() => {
-                    addToCart({
-                      id: `${selectedArt.id}-print`,
-                      title: `${selectedArt.alt} (Print)`,
+                    const result = addToCart({
+                      id: selectedArt.id,
+                      title: selectedArt.alt,
                       image: selectedArt.image,
-                      priceCents: cents(parsePriceToCents(selectedArt.printPrice!)),
-                      type: 'print',
+                      priceCents: cents(parsePriceToCents(selectedArt.originalPrice)),
+                      type: 'original',
                     });
-                    showToast(`Added "${selectedArt.alt}" (Print) to cart`);
+
+                    if (result?.success) {
+                      showToast(`Added "${selectedArt.alt}" (Original) to cart`);
+                    } else if (result?.message) {
+                      showToast(result.message);
+                    }
                   }}
                 >
                   Buy Print
